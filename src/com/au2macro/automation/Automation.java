@@ -1,4 +1,4 @@
-package com.zyill.automation;
+package com.au2macro.automation;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -23,12 +23,17 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -49,6 +54,7 @@ public class Automation extends JFrame{
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -148,8 +154,9 @@ public class Automation extends JFrame{
 		setTitle("Au2Macro");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 290, 350);
+		setBounds(100, 100, 500, 350);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(95, 158, 160));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -164,7 +171,17 @@ public class Automation extends JFrame{
 		txtInterval = new JTextField();
 		txtStartInterval = new JTextField();
 		List listLogs = new List();
-
+		JRadioButton rdbtnClick = new JRadioButton("Auto Right Click");
+		JRadioButton rdbtnSpace = new JRadioButton("Auto Space");
+		JRadioButton rdbtnShout = new JRadioButton("Auto Shout");
+		JRadioButton rdbtnNumber = new JRadioButton("Auto 1 ~ =");
+		ButtonGroup buttonGroup = new ButtonGroup();
+		
+		buttonGroup.add(rdbtnClick);
+		buttonGroup.add(rdbtnSpace);
+		buttonGroup.add(rdbtnShout);
+		buttonGroup.add(rdbtnNumber);
+		
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -190,7 +207,7 @@ public class Automation extends JFrame{
 
 			}
 		});
-		btnStart.setBounds(164, 45, 89, 30);
+		btnStart.setBounds(388, 177, 89, 30);
 		contentPane.add(btnStart);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -210,7 +227,7 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		btnStop.setBounds(164, 80, 89, 30);
+		btnStop.setBounds(388, 212, 89, 30);
 		contentPane.add(btnStop);
 
 		txtInterval.setText("50");
@@ -233,14 +250,15 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtInterval.setBounds(38, 61, 100, 25);
+		txtInterval.setBounds(262, 193, 100, 25);
 		contentPane.add(txtInterval);
 
 		JLabel lblNewLabel = new JLabel("Interval");
-		lblNewLabel.setBounds(38, 36, 46, 14);
+		lblNewLabel.setForeground(Color.BLACK);
+		lblNewLabel.setBounds(262, 168, 46, 14);
 		contentPane.add(lblNewLabel);
 
-		txtStartInterval.setText("5000");
+		txtStartInterval.setText("2000");
 		txtStartInterval.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -260,23 +278,24 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtStartInterval.setBounds(38, 118, 100, 25);
+		txtStartInterval.setBounds(262, 250, 100, 25);
 		contentPane.add(txtStartInterval);
 
 		JLabel lblStartInterval = new JLabel("Start Interval");
-		lblStartInterval.setBounds(38, 95, 86, 14);
+		lblStartInterval.setForeground(Color.BLACK);
+		lblStartInterval.setBounds(262, 227, 86, 14);
 		contentPane.add(lblStartInterval);
 
-		JLabel lblAutoMacro = new JLabel("Au2 Macro");
+		JLabel lblAutoMacro = new JLabel("Au2macro");
+		lblAutoMacro.setForeground(Color.BLACK);
 		lblAutoMacro.setHorizontalAlignment(SwingConstants.CENTER);
-		lblAutoMacro.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblAutoMacro.setBounds(94, 2, 100, 30);
+		lblAutoMacro.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblAutoMacro.setBounds(148, 33, 200, 30);
 		contentPane.add(lblAutoMacro);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(40, 168, 213, 135);
+		scrollPane.setBounds(20, 84, 213, 220);
 		contentPane.add(scrollPane);
-
 		scrollPane.setViewportView(listLogs);
 
 		JButton btnClear = new JButton("Clear");
@@ -287,7 +306,66 @@ public class Automation extends JFrame{
 				listLogs.removeAll();
 			}
 		});
-		btnClear.setBounds(164, 115, 89, 30);
+		btnClear.setBounds(388, 247, 89, 30);
 		contentPane.add(btnClear);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 1, 500, 21);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 500, 21);
+		panel.add(menuBar);
+		
+		JMenu mnFile = new JMenu("Menu");
+		menuBar.add(mnFile);
+		
+		JMenuItem mntmSwitchAccount = new JMenuItem("Switch Account");
+		mnFile.add(mntmSwitchAccount);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Au2macro v1.0\nContact: au2macro@gmail.com");
+			}
+		});
+		mnFile.add(mntmAbout);
+		
+		JMenu mnExit = new JMenu("Exit");
+		mnExit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int message = JOptionPane.showConfirmDialog(null, "Are you sure?", "Au2macro", 0);
+				if (message == 0) {
+					System.exit(0);
+				}
+			}
+		});
+		menuBar.add(mnExit);
+		
+		rdbtnClick.setForeground(Color.BLACK);
+		rdbtnClick.setBackground(new Color(95, 158, 160));
+		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		rdbtnClick.setBounds(262, 96, 109, 23);
+		contentPane.add(rdbtnClick);
+		
+		rdbtnSpace.setForeground(Color.BLACK);
+		rdbtnSpace.setBackground(new Color(95, 158, 160));
+		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		rdbtnSpace.setBounds(262, 122, 109, 23);
+		contentPane.add(rdbtnSpace);
+		
+		rdbtnShout.setForeground(Color.BLACK);
+		rdbtnShout.setBackground(new Color(95, 158, 160));
+		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		rdbtnShout.setBounds(373, 96, 109, 23);
+		contentPane.add(rdbtnShout);
+		
+		rdbtnNumber.setForeground(Color.BLACK);
+		rdbtnNumber.setBackground(new Color(95, 158, 160));
+		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		rdbtnNumber.setBounds(373, 122, 109, 23);
+		contentPane.add(rdbtnNumber);
 	}
 }

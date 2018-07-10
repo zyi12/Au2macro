@@ -1,4 +1,4 @@
-package com.zyill.automation;
+package com.au2macro.automation;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
