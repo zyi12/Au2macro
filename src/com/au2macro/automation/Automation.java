@@ -87,7 +87,7 @@ public class Automation extends JFrame{
 	}
 	public static void systemTray(Automation frame) {
 		if (SystemTray.isSupported()) {
-			trayIcon = new TrayIcon(createIcon("/com/zyill/automation/image/systemtrayicon.png", "Icon"));
+			trayIcon = new TrayIcon(createIcon("/com/au2macro/automation/image/systemtrayicon.png", "Icon"));
 			trayIcon.setToolTip("Au2macro");
 			final SystemTray tray = SystemTray.getSystemTray();
 			final PopupMenu menu = new PopupMenu();
@@ -135,7 +135,7 @@ public class Automation extends JFrame{
 	}
 
 	public Automation() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Automation.class.getResource("/com/zyill/automation/image/icon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Automation.class.getResource("/com/au2macro/automation/image/icon.png")));
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
@@ -322,6 +322,21 @@ public class Automation extends JFrame{
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmSwitchAccount = new JMenuItem("Switch Account");
+		mntmSwitchAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Login login = new Login();
+				dispose();
+				login.main(null);
+			}
+		});
+		mntmSwitchAccount.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Login login = new Login();
+				dispose();
+				login.main(null);
+			}
+		});
 		mnFile.add(mntmSwitchAccount);
 		
 		JMenuItem mntmAbout = new JMenuItem("About");
