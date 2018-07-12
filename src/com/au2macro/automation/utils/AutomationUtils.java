@@ -1,6 +1,8 @@
-package com.au2macro.automation;
+package com.au2macro.automation.utils;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+
+import com.au2macro.automation.Automation;
 
 public class AutomationUtils implements Runnable{
 	

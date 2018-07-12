@@ -20,6 +20,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,6 +46,9 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.Document;
 
+import com.au2macro.automation.utils.AutomationUtils;
+import com.au2macro.automation.utils.StaticVariable;
+
 public class Automation extends JFrame{
 
 	/**
@@ -51,18 +58,26 @@ public class Automation extends JFrame{
 	private JPanel contentPane;
 	private JTextField txtInterval;
 	private JTextField txtStartInterval;
+	public static String token;
+	public static Thread checkToken;
+	public static Automation frame;
+
 	/**
 	 * Launch the application.
 	 */
-	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Automation frame = new Automation();
+					frame = new Automation();
 					frame.setExtendedState(JFrame.ICONIFIED);
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
+					AccessToken accessToken = new AccessToken();
+					accessToken.setToken(token);
+					checkToken = new Thread(accessToken);
+					checkToken.start();
 					//detectHotkey();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -176,12 +191,12 @@ public class Automation extends JFrame{
 		JRadioButton rdbtnShout = new JRadioButton("Auto Shout");
 		JRadioButton rdbtnNumber = new JRadioButton("Auto 1 ~ =");
 		ButtonGroup buttonGroup = new ButtonGroup();
-		
+
 		buttonGroup.add(rdbtnClick);
 		buttonGroup.add(rdbtnSpace);
 		buttonGroup.add(rdbtnShout);
 		buttonGroup.add(rdbtnNumber);
-		
+
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -196,7 +211,6 @@ public class Automation extends JFrame{
 						startIntrv = Integer.parseInt(txtStartInterval.getText());
 						intrv = Integer.parseInt(txtInterval.getText());
 						listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Starting service...");
-						//Thread.sleep(startIntrv);
 						automationUtils = new AutomationUtils();
 						thread = new Thread(automationUtils);
 						thread.start();
@@ -308,37 +322,43 @@ public class Automation extends JFrame{
 		});
 		btnClear.setBounds(388, 247, 89, 30);
 		contentPane.add(btnClear);
-		
+
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 1, 500, 21);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 500, 21);
 		panel.add(menuBar);
-		
+
 		JMenu mnFile = new JMenu("Menu");
 		menuBar.add(mnFile);
-		
+
 		JMenuItem mntmSwitchAccount = new JMenuItem("Switch Account");
 		mntmSwitchAccount.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent e) {
+				checkToken.interrupt();
+				logOut(token);
 				Login login = new Login();
 				dispose();
 				login.main(null);
 			}
 		});
 		mntmSwitchAccount.addMouseListener(new MouseAdapter() {
+			@SuppressWarnings("static-access")
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				checkToken.interrupt();
+				logOut(token);
 				Login login = new Login();
 				dispose();
 				login.main(null);
 			}
 		});
 		mnFile.add(mntmSwitchAccount);
-		
+
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mntmAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -346,41 +366,66 @@ public class Automation extends JFrame{
 			}
 		});
 		mnFile.add(mntmAbout);
-		
+
 		JMenu mnExit = new JMenu("Exit");
 		mnExit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				int message = JOptionPane.showConfirmDialog(null, "Are you sure?", "Au2macro", 0);
 				if (message == 0) {
+					logOut(token);
 					System.exit(0);
 				}
 			}
 		});
 		menuBar.add(mnExit);
-		
+
 		rdbtnClick.setForeground(Color.BLACK);
 		rdbtnClick.setBackground(new Color(95, 158, 160));
 		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnClick.setBounds(262, 96, 109, 23);
 		contentPane.add(rdbtnClick);
-		
+
 		rdbtnSpace.setForeground(Color.BLACK);
 		rdbtnSpace.setBackground(new Color(95, 158, 160));
 		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnSpace.setBounds(262, 122, 109, 23);
 		contentPane.add(rdbtnSpace);
-		
+
 		rdbtnShout.setForeground(Color.BLACK);
 		rdbtnShout.setBackground(new Color(95, 158, 160));
 		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnShout.setBounds(373, 96, 109, 23);
 		contentPane.add(rdbtnShout);
-		
+
 		rdbtnNumber.setForeground(Color.BLACK);
 		rdbtnNumber.setBackground(new Color(95, 158, 160));
 		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnNumber.setBounds(373, 122, 109, 23);
 		contentPane.add(rdbtnNumber);
+	}
+	
+	private static StaticVariable SV;
+	
+	@SuppressWarnings("static-access")
+	public static Connection getMysqlConnection() throws SQLException {
+		return DriverManager.getConnection(SV.DBURL, SV.DBUSER, SV.DBPASS);
+	}
+	
+	public void logOut(String token) {
+		try {
+			Connection connection = getMysqlConnection();
+			Statement statement = connection.createStatement();
+			String sql = "UPDATE `user` SET lastAccess=DATE_SUB(NOW(), INTERVAL 1 MINUTE) WHERE `accessToken`='"+token+"'";
+			statement.executeUpdate(sql);
+			if (statement != null) {
+				statement.close();
+			}
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 }
