@@ -6,12 +6,9 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.swing.JButton;
@@ -24,7 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.json.JSONObject;
 
+import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 
 public class Login extends JFrame {
@@ -36,8 +35,11 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
-	private static StaticVariable SV;
 	private static final String key = "Au2macroAu2macro";// 128 bit key	
+	public static StaticVariable SV;
+	String response;
+	JSONObject jObject = new JSONObject();
+	JSONObject data = new JSONObject();
 	/**
 	 * Launch the application.
 	 */
@@ -48,17 +50,36 @@ public class Login extends JFrame {
 					Login frame = new Login();
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
+					
+					//Get Array
+					/*String response = httpRequest(null, "http://localhost/au2macro/users.php", "GET");
+					JSONObject jObject = new JSONObject(response);
+					System.err.println(jObject);
+					JSONArray data = jObject.getJSONArray("data");
+					System.err.println(data);
+					for (int i = 0; i < data.length(); i++) {
+						String tmp = data.get(i).toString();
+						JSONObject user = new JSONObject(tmp);
+						System.err.println(user);
+						System.err.println(user.getString("username"));
+						System.err.println(user.getString("password"));
+						System.err.println(user.get("username"));
+						System.err.println(user.get("password"));
+					}*/
+					
+					//Get Object
+					/*String response = httpRequest(null, "http://localhost/au2macro/user.php?username=root", "GET");
+					JSONObject jObject = new JSONObject(response);
+					System.err.println(jObject);
+					JSONObject data = jObject.getJSONObject("data");
+					System.err.println(data);*/
+					
 					//createAdminAccount();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-	}
-
-	@SuppressWarnings("static-access")
-	public static Connection getMysqlConnection() throws SQLException {
-		return DriverManager.getConnection(SV.DBURL, SV.DBUSER, SV.DBPASS);
 	}
 
 	public static String StandardEnrypt(String password) {
@@ -75,31 +96,21 @@ public class Login extends JFrame {
 		return decrypted;
 	}
 
+	@SuppressWarnings("static-access")
 	public static void createAdminAccount() {
 		try {
-			String username = "johnmike";
+			String username = "gok";
 			String password = StandardEnrypt("password");
 			String accessToken = "";
 			Date expiration = new Date(System.currentTimeMillis());
 			String status = "Active";
-
-			Connection connection = getMysqlConnection();
-			Statement statement = connection.createStatement();
-			String sql = "INSERT INTO `user` (`username`, `password`, `accessToken`, `lastAccess`, `expiration`, `status`) "
-					+"VALUES ('"+username+"', '"+password+"', '"+accessToken+"', NOW(), '"+expiration+"', '"+status+"')";
-			statement.executeUpdate(sql);
-			if (statement != null) {
-				statement.close();
-			}
-			if (connection != null) {
-				connection.close();
-			}
+	
+			@SuppressWarnings("deprecation")
+			String request = "username="+URLEncoder.encode(username)+"&password="+URLEncoder.encode(password)+"&accessToken="+URLEncoder.encode(accessToken)+"&expiration="+URLEncoder.encode(expiration.toString())+"&status="+URLEncoder.encode(status)+"";
+			String response = HttpConnection.httpRequest(request, SV.URL+"user.create.php", "POST");
+			System.err.println(response);
 		} catch (Exception e) {
-			if (e.getMessage().contains("Communications link failure")) {
-				JOptionPane.showMessageDialog(null, "Can't connect to server. Please check your internet connection!", "Error", JOptionPane.ERROR_MESSAGE);
-			}else {
-				System.err.println(e.getMessage());
-			}
+			System.err.println(e.getMessage());
 		}
 	}
 	/**
@@ -154,7 +165,7 @@ public class Login extends JFrame {
 		txtPassword.setBounds(52, 140, 200, 25);
 		contentPane.add(txtPassword);
 	}
-
+	
 	@SuppressWarnings("static-access")
 	public void login() {
 		try {
@@ -162,38 +173,43 @@ public class Login extends JFrame {
 			String username = txtUsername.getText();
 			@SuppressWarnings("deprecation")
 			String password = txtPassword.getText();
-			ResultSet resultSet = null;
-			Connection connection = getMysqlConnection();
-			Statement statement = connection.createStatement();
-			String sql = "SELECT * FROM `user` WHERE username = '"+username+"' and status='Active'";
-			resultSet = statement.executeQuery(sql);
-			if (resultSet.first()) {
-				int id = resultSet.getInt("id");
-				String getUsername = resultSet.getString("username");
-				String encrpytPassword = resultSet.getString("password");
-				Date getDate = resultSet.getDate("expiration");
-				String getPassword = StandardDcrypt(encrpytPassword);
-				boolean isValidSubsription = false;
-				if (now.compareTo(getDate) > 0) {
-					isValidSubsription = false;
-		        } else if (now.compareTo(getDate) < 0) {
-		        	isValidSubsription = true;
-		        } else {
-		        	isValidSubsription = false;
-		        }
-				if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true) {
-					String sqlcheck = "SELECT * FROM `user` WHERE username = '"+username+"' and lastAccess < DATE_SUB(NOW(), INTERVAL 1 MINUTE)";
-					resultSet = statement.executeQuery(sqlcheck);
-					if (resultSet.first()) {
-						Automation automation = new Automation();
-						String token = createUserToken(id);
-						automation.token = token;
-						dispose();
-						automation.main(null);
+
+			if (!username.isEmpty() && !password.isEmpty()) {
+				response = HttpConnection.httpRequest(null, SV.URL+"user.php?username="+username, "GET");
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
+					JSONObject message = data.getJSONObject("message");
+					int id = Integer.parseInt(message.getString("id"));
+					String getUsername = message.getString("username");
+					String encrpytPassword = message.getString("password");
+					Date getDate = new SimpleDateFormat("yyyy-MM-dd").parse(message.getString("expiration"));
+					String getPassword = StandardDcrypt(encrpytPassword);
+					boolean isValidSubsription = false;
+					if (now.compareTo(getDate) > 0) {
+						isValidSubsription = false;
+			        } else if (now.compareTo(getDate) < 0) {
+			        	isValidSubsription = true;
+			        } else {
+			        	isValidSubsription = false;
+			        }
+					if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true && message.getString("status").equals("Active")) {
+						response = HttpConnection.httpRequest(null, SV.URL+"user.lastaccess.php?username="+username, "GET");
+						jObject = new JSONObject(response);
+						data = jObject.getJSONObject("data");
+						if (data.getString("status").contains("success")) {
+							Automation automation = new Automation();
+							String token = createUserToken(id);
+							automation.token = token;
+							dispose();
+							automation.main(null);
+						}else {
+							JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 					}else {
-						JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-				}else {
+				}else{
 					JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}else {
@@ -204,23 +220,25 @@ public class Login extends JFrame {
 			JOptionPane.showMessageDialog(null, "Can't connect at this momment", "Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
+	@SuppressWarnings("static-access")
 	public String createUserToken(int id) {
 		try {
 			String token = UUID.randomUUID().toString();
-			Connection connection = getMysqlConnection();
-			Statement statement = connection.createStatement();
-			String sql = "UPDATE `user` SET `accessToken`='"+token+"', lastAccess=NOW() WHERE `id`='"+id+"'";
-			statement.executeUpdate(sql);
-			if (statement != null) {
-				statement.close();
+			@SuppressWarnings("deprecation")
+			String request = "id="+URLEncoder.encode(String.valueOf(id))+"&accessToken="+URLEncoder.encode(token);
+			response = HttpConnection.httpRequest(request, SV.URL+"user.create.accesstoken.php", "POST");
+			jObject = new JSONObject(response);
+			data = jObject.getJSONObject("data");
+			if (data.getString("status").contains("success")) {
+				return token;
+			}else {
+				JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			if (connection != null) {
-				connection.close();
-			}
-			return token;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
 		return null;
 	}
+
 }

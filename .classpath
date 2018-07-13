@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_60"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/zalcarez/Downloads/mysql-connector-java-8.0.11/mysql-connector-java-8.0.11/mysql-connector-java-8.0.11.jar"/>
-	<classpathentry kind="lib" path="C:/Users/zalcarez/Downloads/jasypt-1.9.2-dist/jasypt-1.9.2/lib/jasypt-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/jasypt-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/json-20140107.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

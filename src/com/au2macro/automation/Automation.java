@@ -20,10 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,7 +43,10 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.Document;
 
+import org.json.JSONObject;
+
 import com.au2macro.automation.utils.AutomationUtils;
+import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 
 public class Automation extends JFrame{
@@ -78,7 +78,6 @@ public class Automation extends JFrame{
 					accessToken.setToken(token);
 					checkToken = new Thread(accessToken);
 					checkToken.start();
-					//detectHotkey();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -405,24 +404,21 @@ public class Automation extends JFrame{
 		contentPane.add(rdbtnNumber);
 	}
 	
-	private static StaticVariable SV;
+	String response;
+	JSONObject jObject = new JSONObject();
+	JSONObject data = new JSONObject();
+	public static StaticVariable SV;
 	
 	@SuppressWarnings("static-access")
-	public static Connection getMysqlConnection() throws SQLException {
-		return DriverManager.getConnection(SV.DBURL, SV.DBUSER, SV.DBPASS);
-	}
-	
 	public void logOut(String token) {
 		try {
-			Connection connection = getMysqlConnection();
-			Statement statement = connection.createStatement();
-			String sql = "UPDATE `user` SET lastAccess=DATE_SUB(NOW(), INTERVAL 1 MINUTE) WHERE `accessToken`='"+token+"'";
-			statement.executeUpdate(sql);
-			if (statement != null) {
-				statement.close();
-			}
-			if (connection != null) {
-				connection.close();
+			@SuppressWarnings("deprecation")
+			String request = "accessToken="+URLEncoder.encode(token);
+			response = HttpConnection.httpRequest(request, SV.URL+"user.logout.php", "POST");
+			jObject = new JSONObject(response);
+			data = jObject.getJSONObject("data");
+			if (data.getString("status").contains("success")) {
+				System.err.println("logout success.");
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());

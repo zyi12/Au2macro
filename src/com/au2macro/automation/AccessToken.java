@@ -1,16 +1,20 @@
 package com.au2macro.automation;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.URLEncoder;
 
 import javax.swing.JOptionPane;
 
+import org.json.JSONObject;
+
+import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 
 public class AccessToken implements Runnable{
+	
+	String response;
+	JSONObject jObject = new JSONObject();
+	JSONObject data = new JSONObject();
+	public static StaticVariable SV;
 	
 	private String token;
 	
@@ -22,25 +26,18 @@ public class AccessToken implements Runnable{
 		this.token = token;
 	}
 
-	private static StaticVariable SV;
-	
-	@SuppressWarnings("static-access")
-	public static Connection getMysqlConnection() throws SQLException {
-		return DriverManager.getConnection(SV.DBURL, SV.DBUSER, SV.DBPASS);
-	}
-	
 	@SuppressWarnings("static-access")
 	@Override
     public void run() {
 		try {
 			while (token != null) {
-				Thread.sleep(1800);
-				ResultSet resultSet = null;
-				Connection connection = getMysqlConnection();
-				Statement statement = connection.createStatement();
-				String sql = "SELECT * FROM `user` WHERE accessToken = '"+token+"'";
-				resultSet = statement.executeQuery(sql);
-				if (resultSet.first()) {
+				Thread.sleep(1800);				
+				@SuppressWarnings("deprecation")
+				String request = "accessToken="+URLEncoder.encode(token);
+				response = HttpConnection.httpRequest(request, SV.URL+"user.checkaccesstoken.php", "POST");
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
 					updateLastAccess(token);
 				}else {
 					JOptionPane.showMessageDialog(null, "Unauthorized token. Please relogin.", "Error", JOptionPane.YES_OPTION);
@@ -56,17 +53,16 @@ public class AccessToken implements Runnable{
 		}
 	}
 	
+	@SuppressWarnings("static-access")
 	public void updateLastAccess(String token) {
 		try {
-			Connection connection = getMysqlConnection();
-			Statement statement = connection.createStatement();
-			String sql = "UPDATE `user` SET lastAccess=NOW() WHERE `accessToken`='"+token+"'";
-			statement.executeUpdate(sql);
-			if (statement != null) {
-				statement.close();
-			}
-			if (connection != null) {
-				connection.close();
+			@SuppressWarnings("deprecation")
+			String request = "accessToken="+URLEncoder.encode(token);
+			response = HttpConnection.httpRequest(request, SV.URL+"user.update.lastaccess.php", "POST");
+			jObject = new JSONObject(response);
+			data = jObject.getJSONObject("data");
+			if (data.getString("status").contains("success")) {
+				System.err.println("last access updated.");
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
