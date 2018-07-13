@@ -180,6 +180,7 @@ public class Login extends JFrame {
 				data = jObject.getJSONObject("data");
 				if (data.getString("status").contains("success")) {
 					JSONObject message = data.getJSONObject("message");
+					System.err.println(message.getString("lastAccess"));
 					int id = Integer.parseInt(message.getString("id"));
 					String getUsername = message.getString("username");
 					String encrpytPassword = message.getString("password");
@@ -193,7 +194,9 @@ public class Login extends JFrame {
 			        } else {
 			        	isValidSubsription = false;
 			        }
+					System.err.println(isValidSubsription);
 					if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true && message.getString("status").equals("Active")) {
+						System.err.println(message.getString("lastAccess"));
 						response = HttpConnection.httpRequest(null, SV.URL+"user.lastaccess.php?username="+username, "GET");
 						jObject = new JSONObject(response);
 						data = jObject.getJSONObject("data");
