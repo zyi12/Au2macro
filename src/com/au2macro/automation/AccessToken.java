@@ -62,7 +62,7 @@ public class AccessToken implements Runnable{
 			jObject = new JSONObject(response);
 			data = jObject.getJSONObject("data");
 			if (data.getString("status").contains("success")) {
-				System.err.println("last access updated.");
+				//System.out.println("last access updated.");
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
+import java.awt.Panel;
 
 public class Login extends JFrame {
 
@@ -50,7 +52,6 @@ public class Login extends JFrame {
 					Login frame = new Login();
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
-					
 					//Get Array
 					/*String response = httpRequest(null, "http://localhost/au2macro/users.php", "GET");
 					JSONObject jObject = new JSONObject(response);
@@ -108,7 +109,7 @@ public class Login extends JFrame {
 			@SuppressWarnings("deprecation")
 			String request = "username="+URLEncoder.encode(username)+"&password="+URLEncoder.encode(password)+"&accessToken="+URLEncoder.encode(accessToken)+"&expiration="+URLEncoder.encode(expiration.toString())+"&status="+URLEncoder.encode(status)+"";
 			String response = HttpConnection.httpRequest(request, SV.URL+"user.create.php", "POST");
-			System.err.println(response);
+			System.out.println(response);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -117,9 +118,10 @@ public class Login extends JFrame {
 	 * Create the frame.
 	 */
 	public Login() {
+		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/com/au2macro/automation/image/icon.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 320, 300);
+		setBounds(100, 100, 325, 304);
 		contentPane = new JPanel();
 		txtUsername = new JTextField();
 		txtUsername.addActionListener(new ActionListener() {
@@ -147,7 +149,7 @@ public class Login extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		txtUsername.setBounds(52, 78, 200, 25);
+		txtUsername.setBounds(59, 78, 200, 25);
 		contentPane.add(txtUsername);
 		txtUsername.setColumns(10);
 
@@ -159,10 +161,10 @@ public class Login extends JFrame {
 		lblPassword.setBounds(52, 114, 100, 20);
 		contentPane.add(lblPassword);
 
-		btnLogin.setBounds(107, 192, 89, 23);
+		btnLogin.setBounds(115, 192, 89, 23);
 		contentPane.add(btnLogin);
 
-		txtPassword.setBounds(52, 140, 200, 25);
+		txtPassword.setBounds(59, 140, 200, 25);
 		contentPane.add(txtPassword);
 	}
 	
@@ -180,7 +182,7 @@ public class Login extends JFrame {
 				data = jObject.getJSONObject("data");
 				if (data.getString("status").contains("success")) {
 					JSONObject message = data.getJSONObject("message");
-					System.err.println(message.getString("lastAccess"));
+					System.out.println(message.getString("lastAccess"));
 					int id = Integer.parseInt(message.getString("id"));
 					String getUsername = message.getString("username");
 					String encrpytPassword = message.getString("password");
@@ -194,9 +196,9 @@ public class Login extends JFrame {
 			        } else {
 			        	isValidSubsription = false;
 			        }
-					System.err.println(isValidSubsription);
+					System.out.println(isValidSubsription);
 					if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true && message.getString("status").equals("Active")) {
-						System.err.println(message.getString("lastAccess"));
+						System.out.println(message.getString("lastAccess"));
 						response = HttpConnection.httpRequest(null, SV.URL+"user.lastaccess.php?username="+username, "GET");
 						jObject = new JSONObject(response);
 						data = jObject.getJSONObject("data");
@@ -219,7 +221,7 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			//System.err.println(e.getMessage());
 			JOptionPane.showMessageDialog(null, "Can't connect at this momment", "Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -239,9 +241,8 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			//System.err.println(e.getMessage());
 		}
 		return null;
 	}
-
 }

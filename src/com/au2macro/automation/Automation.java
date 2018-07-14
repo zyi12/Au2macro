@@ -45,7 +45,10 @@ import javax.swing.text.Document;
 
 import org.json.JSONObject;
 
-import com.au2macro.automation.utils.AutomationUtils;
+import com.au2macro.automation.utils.AutomationAutoNumKey;
+import com.au2macro.automation.utils.AutomationAutoRightClick;
+import com.au2macro.automation.utils.AutomationAutoShout;
+import com.au2macro.automation.utils.AutomationAutoSpace;
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 
@@ -61,7 +64,19 @@ public class Automation extends JFrame{
 	public static String token;
 	public static Thread checkToken;
 	public static Automation frame;
-
+	
+	public static boolean is1 = true;
+	public static boolean is2 = true;
+	public static boolean is3 = true;
+	public static boolean is4 = true;
+	public static boolean is5 = true;
+	public static boolean is6 = true;
+	public static boolean is7 = true;
+	public static boolean is8 = true;
+	public static boolean is9 = true;
+	public static boolean is0 = true;
+	public static boolean isMinus = true;
+	public static boolean isEqual = true;
 	/**
 	 * Launch the application.
 	 */
@@ -70,6 +85,7 @@ public class Automation extends JFrame{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					//Toolkit.getDefaultToolkit().addAWTEventListener(new Listener(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK);
 					frame = new Automation();
 					frame.setExtendedState(JFrame.ICONIFIED);
 					frame.setLocationRelativeTo(null);
@@ -84,13 +100,23 @@ public class Automation extends JFrame{
 			}
 		});
 	}
+	
+	/*private static class Listener implements AWTEventListener {
+        public void eventDispatched(AWTEvent event) {
+            System.out.print(MouseInfo.getPointerInfo().getLocation() + " | ");
+            System.out.println(event);
+        }
+    }*/
 
 	/**
 	 * Create the frame.
 	 */
 	public static boolean isStart = false;
 	public static boolean isStop = false;
-	public AutomationUtils automationUtils;
+	public AutomationAutoNumKey automationAutoNumKey;
+	public AutomationAutoRightClick automationAutoRightClick;
+	public AutomationAutoShout automationAutoShout;
+	public AutomationAutoSpace automationAutoSpace;
 	public Thread thread;
 	public static int startIntrv;
 	public static int intrv;
@@ -120,6 +146,7 @@ public class Automation extends JFrame{
 			exit.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					logOut(token);
 					System.exit(0);
 				}
 			});
@@ -164,6 +191,10 @@ public class Automation extends JFrame{
 				setLocationRelativeTo(null);
 				setVisible(false);
 			}
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				logOut(token);
+			}
 		});
 		setTitle("Au2Macro");
 		setResizable(false);
@@ -186,9 +217,30 @@ public class Automation extends JFrame{
 		txtStartInterval = new JTextField();
 		List listLogs = new List();
 		JRadioButton rdbtnClick = new JRadioButton("Auto Right Click");
+		rdbtnClick.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtInterval.setText("50");
+			}
+		});
 		JRadioButton rdbtnSpace = new JRadioButton("Auto Space");
+		rdbtnSpace.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtInterval.setText("50");
+			}
+		});
 		JRadioButton rdbtnShout = new JRadioButton("Auto Shout");
+		rdbtnShout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				txtInterval.setText("20000");
+			}
+		});
 		JRadioButton rdbtnNumber = new JRadioButton("Auto 1 ~ =");
+		rdbtnNumber.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtInterval.setText("50");
+			}
+		});
+		rdbtnNumber.setSelected(true);
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		buttonGroup.add(rdbtnClick);
@@ -210,9 +262,41 @@ public class Automation extends JFrame{
 						startIntrv = Integer.parseInt(txtStartInterval.getText());
 						intrv = Integer.parseInt(txtInterval.getText());
 						listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Starting service...");
-						automationUtils = new AutomationUtils();
-						thread = new Thread(automationUtils);
-						thread.start();
+						/*System.out.println("is1: "+is1);
+						System.out.println("is2: "+is2);
+						System.out.println("is3: "+is3);
+						System.out.println("is4: "+is4);
+						System.out.println("is5: "+is5);
+						System.out.println("is6: "+is6);
+						System.out.println("is7: "+is7);
+						System.out.println("is8: "+is8);
+						System.out.println("is9: "+is9);
+						System.out.println("is0: "+is0);
+						System.out.println("is-: "+isMinus);
+						System.out.println("is=: "+isEqual);*/
+						if (rdbtnClick.isSelected() == true) {
+							//System.out.println("rdbtnClick");
+							automationAutoRightClick = new AutomationAutoRightClick();
+							thread = new Thread(automationAutoRightClick);
+							thread.start();
+						}else if (rdbtnSpace.isSelected() == true) {
+							//System.out.println("rdbtnSpace");
+							automationAutoSpace = new AutomationAutoSpace();
+							thread = new Thread(automationAutoSpace);
+							thread.start();
+						}else if (rdbtnShout.isSelected() == true) {
+							//System.out.println("rdbtnSpace");
+							automationAutoShout = new AutomationAutoShout();
+							thread = new Thread(automationAutoShout);
+							thread.start();
+						}else if (rdbtnNumber.isSelected() == true) {
+							//System.out.println("rdbtnNumber");
+							automationAutoNumKey = new AutomationAutoNumKey();
+							thread = new Thread(automationAutoNumKey);
+							thread.start();
+						}else {
+							JOptionPane.showMessageDialog(null, "Option is not available", "au2macro", JOptionPane.INFORMATION_MESSAGE);
+						}
 					}
 				} catch (Exception exception) {
 					System.err.println(exception.getMessage());
@@ -233,7 +317,18 @@ public class Automation extends JFrame{
 						txtStartInterval.setEnabled(true);
 						listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Stopping service!");
 						thread.interrupt();
-						automationUtils = null;
+						if (automationAutoNumKey != null) {
+							automationAutoNumKey = null;
+						}
+						if (automationAutoRightClick != null) {
+							automationAutoRightClick = null;
+						}
+						if (automationAutoSpace != null) {
+							automationAutoSpace = null;
+						}
+						if (automationAutoShout != null) {
+							automationAutoShout = null;
+						}
 					}
 				} catch (Exception exception) {
 					System.err.println(exception.getMessage());
@@ -364,6 +459,16 @@ public class Automation extends JFrame{
 				JOptionPane.showMessageDialog(null, "Au2macro v1.0\nContact: au2macro@gmail.com");
 			}
 		});
+		
+		JMenuItem mntmNumkey = new JMenuItem("Edit 1 ~ =");
+		mntmNumkey.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
+			public void actionPerformed(ActionEvent arg0) {
+				AutomationNumber automationNumber = new AutomationNumber();
+				automationNumber.main(null);
+			}
+		});
+		mnFile.add(mntmNumkey);
 		mnFile.add(mntmAbout);
 
 		JMenu mnExit = new JMenu("Exit");
@@ -383,6 +488,8 @@ public class Automation extends JFrame{
 		rdbtnClick.setBackground(new Color(95, 158, 160));
 		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnClick.setBounds(262, 96, 109, 23);
+		rdbtnClick.setVisible(false);
+		rdbtnClick.setEnabled(false);
 		contentPane.add(rdbtnClick);
 
 		rdbtnSpace.setForeground(Color.BLACK);
@@ -404,13 +511,13 @@ public class Automation extends JFrame{
 		contentPane.add(rdbtnNumber);
 	}
 	
-	String response;
-	JSONObject jObject = new JSONObject();
-	JSONObject data = new JSONObject();
+	static String response;
+	static JSONObject jObject = new JSONObject();
+	static JSONObject data = new JSONObject();
 	public static StaticVariable SV;
 	
 	@SuppressWarnings("static-access")
-	public void logOut(String token) {
+	public static void logOut(String token) {
 		try {
 			@SuppressWarnings("deprecation")
 			String request = "accessToken="+URLEncoder.encode(token);
@@ -418,7 +525,7 @@ public class Automation extends JFrame{
 			jObject = new JSONObject(response);
 			data = jObject.getJSONObject("data");
 			if (data.getString("status").contains("success")) {
-				System.err.println("logout success.");
+				System.out.println("logout success.");
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
