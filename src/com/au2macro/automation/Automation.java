@@ -77,10 +77,11 @@ public class Automation extends JFrame{
 	public static boolean is0 = true;
 	public static boolean isMinus = true;
 	public static boolean isEqual = true;
+	static List listLogs = new List();
 	/**
 	 * Launch the application.
 	 */
-
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -92,6 +93,7 @@ public class Automation extends JFrame{
 					frame.setVisible(true);
 					AccessToken accessToken = new AccessToken();
 					accessToken.setToken(token);
+					listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Authorized login.");
 					checkToken = new Thread(accessToken);
 					checkToken.start();
 				} catch (Exception e) {
@@ -174,13 +176,13 @@ public class Automation extends JFrame{
 		URL imageURL = Automation.class.getResource(path);
 		return (new ImageIcon(imageURL,desc)).getImage();
 	}
-
+	
 	public Automation() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Automation.class.getResource("/com/au2macro/automation/image/icon.png")));
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
-				System.out.println("keyTyped");
+				//System.out.println("keyTyped");
 			}
 		});
 		addWindowListener(new WindowAdapter() {
@@ -215,7 +217,7 @@ public class Automation extends JFrame{
 		btnStop.setBackground(UIManager.getColor("Button.background"));
 		txtInterval = new JTextField();
 		txtStartInterval = new JTextField();
-		List listLogs = new List();
+		
 		JRadioButton rdbtnClick = new JRadioButton("Auto Right Click");
 		rdbtnClick.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -304,7 +306,7 @@ public class Automation extends JFrame{
 
 			}
 		});
-		btnStart.setBounds(388, 177, 89, 30);
+		btnStart.setBounds(388, 191, 89, 30);
 		contentPane.add(btnStart);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -335,7 +337,7 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		btnStop.setBounds(388, 212, 89, 30);
+		btnStop.setBounds(388, 226, 89, 30);
 		contentPane.add(btnStop);
 
 		txtInterval.setText("50");
@@ -358,12 +360,12 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtInterval.setBounds(262, 193, 100, 25);
+		txtInterval.setBounds(262, 207, 100, 25);
 		contentPane.add(txtInterval);
 
 		JLabel lblNewLabel = new JLabel("Interval");
 		lblNewLabel.setForeground(Color.BLACK);
-		lblNewLabel.setBounds(262, 168, 46, 14);
+		lblNewLabel.setBounds(262, 182, 46, 14);
 		contentPane.add(lblNewLabel);
 
 		txtStartInterval.setText("2000");
@@ -386,12 +388,12 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtStartInterval.setBounds(262, 250, 100, 25);
+		txtStartInterval.setBounds(262, 264, 100, 25);
 		contentPane.add(txtStartInterval);
 
 		JLabel lblStartInterval = new JLabel("Start Interval");
 		lblStartInterval.setForeground(Color.BLACK);
-		lblStartInterval.setBounds(262, 227, 86, 14);
+		lblStartInterval.setBounds(262, 241, 86, 14);
 		contentPane.add(lblStartInterval);
 
 		JLabel lblAutoMacro = new JLabel("Au2macro");
@@ -414,7 +416,7 @@ public class Automation extends JFrame{
 				listLogs.removeAll();
 			}
 		});
-		btnClear.setBounds(388, 247, 89, 30);
+		btnClear.setBounds(388, 261, 89, 30);
 		contentPane.add(btnClear);
 
 		JPanel panel = new JPanel();
@@ -433,22 +435,28 @@ public class Automation extends JFrame{
 		mntmSwitchAccount.addActionListener(new ActionListener() {
 			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent e) {
-				checkToken.interrupt();
-				logOut(token);
-				Login login = new Login();
-				dispose();
-				login.main(null);
+				int i = JOptionPane.showConfirmDialog(null, "Are you sure to logout?", "au2macro", JOptionPane.OK_CANCEL_OPTION);
+				if (i == 0) {
+					checkToken.interrupt();
+					logOut(token);
+					Login login = new Login();
+					dispose();
+					login.main(null);	
+				}
 			}
 		});
 		mntmSwitchAccount.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("static-access")
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				checkToken.interrupt();
-				logOut(token);
-				Login login = new Login();
-				dispose();
-				login.main(null);
+				int i = JOptionPane.showConfirmDialog(null, "Are you sure to logout?", "au2macro", JOptionPane.OK_CANCEL_OPTION);
+				if (i == 0) {
+					checkToken.interrupt();
+					logOut(token);
+					Login login = new Login();
+					dispose();
+					login.main(null);	
+				}
 			}
 		});
 		mnFile.add(mntmSwitchAccount);
@@ -486,28 +494,28 @@ public class Automation extends JFrame{
 
 		rdbtnClick.setForeground(Color.BLACK);
 		rdbtnClick.setBackground(new Color(95, 158, 160));
-		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnClick.setBounds(262, 96, 109, 23);
+		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtnClick.setBounds(316, 66, 150, 23);
 		rdbtnClick.setVisible(false);
 		rdbtnClick.setEnabled(false);
 		contentPane.add(rdbtnClick);
 
 		rdbtnSpace.setForeground(Color.BLACK);
 		rdbtnSpace.setBackground(new Color(95, 158, 160));
-		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnSpace.setBounds(262, 122, 109, 23);
+		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtnSpace.setBounds(316, 116, 150, 23);
 		contentPane.add(rdbtnSpace);
 
 		rdbtnShout.setForeground(Color.BLACK);
 		rdbtnShout.setBackground(new Color(95, 158, 160));
-		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnShout.setBounds(373, 96, 109, 23);
+		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtnShout.setBounds(316, 91, 150, 23);
 		contentPane.add(rdbtnShout);
 
 		rdbtnNumber.setForeground(Color.BLACK);
 		rdbtnNumber.setBackground(new Color(95, 158, 160));
-		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnNumber.setBounds(373, 122, 109, 23);
+		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtnNumber.setBounds(316, 141, 150, 23);
 		contentPane.add(rdbtnNumber);
 	}
 	
@@ -522,10 +530,14 @@ public class Automation extends JFrame{
 			@SuppressWarnings("deprecation")
 			String request = "accessToken="+URLEncoder.encode(token);
 			response = HttpConnection.httpRequest(request, SV.URL+"user.logout.php", "POST");
-			jObject = new JSONObject(response);
-			data = jObject.getJSONObject("data");
-			if (data.getString("status").contains("success")) {
-				System.out.println("logout success.");
+			if (response.contains("\"data\"")) {
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
+					System.out.println("logout success.");
+				}	
+			}else {
+				logOut(token);
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());

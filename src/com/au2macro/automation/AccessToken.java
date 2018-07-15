@@ -31,21 +31,23 @@ public class AccessToken implements Runnable{
     public void run() {
 		try {
 			while (token != null) {
-				Thread.sleep(1800);				
+				Thread.sleep(3000);				
 				@SuppressWarnings("deprecation")
 				String request = "accessToken="+URLEncoder.encode(token);
 				response = HttpConnection.httpRequest(request, SV.URL+"user.checkaccesstoken.php", "POST");
-				jObject = new JSONObject(response);
-				data = jObject.getJSONObject("data");
-				if (data.getString("status").contains("success")) {
-					updateLastAccess(token);
-				}else {
-					JOptionPane.showMessageDialog(null, "Unauthorized token. Please relogin.", "Error", JOptionPane.YES_OPTION);
-					Automation.frame.logOut(token);
-					Automation.checkToken.interrupt();
-					Automation.frame.setVisible(false);
-					Login login = new Login();
-					login.main(null);
+				if (response.contains("\"data\"")) {
+					jObject = new JSONObject(response);
+					data = jObject.getJSONObject("data");
+					if (data.getString("status").contains("success")) {
+						updateLastAccess(token);
+					}else {
+						JOptionPane.showMessageDialog(null, "Unauthorized token. Please relogin.", "Error", JOptionPane.YES_OPTION);
+						Automation.frame.logOut(token);
+						Automation.checkToken.interrupt();
+						Automation.frame.setVisible(false);
+						Login login = new Login();
+						login.main(null);
+					}	
 				}
 			}
 		} catch (Exception e) {
@@ -59,10 +61,17 @@ public class AccessToken implements Runnable{
 			@SuppressWarnings("deprecation")
 			String request = "accessToken="+URLEncoder.encode(token);
 			response = HttpConnection.httpRequest(request, SV.URL+"user.update.lastaccess.php", "POST");
-			jObject = new JSONObject(response);
-			data = jObject.getJSONObject("data");
-			if (data.getString("status").contains("success")) {
-				//System.out.println("last access updated.");
+			if (response.contains("\"data\"")) {
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
+					System.out.println("last access updated.");
+				}
+			}else {
+				/*JOptionPane.showConfirmDialog(null, "Your internet connection is too slow. Please re-login.", "Error", JOptionPane.OK_OPTION);
+				Automation.logOut(token);
+				System.exit(0);*/
+				System.out.println("Internet connection is too slow");
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());

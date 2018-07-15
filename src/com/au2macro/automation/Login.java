@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,7 +25,6 @@ import org.json.JSONObject;
 
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
-import java.awt.Panel;
 
 public class Login extends JFrame {
 
@@ -52,30 +50,6 @@ public class Login extends JFrame {
 					Login frame = new Login();
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
-					//Get Array
-					/*String response = httpRequest(null, "http://localhost/au2macro/users.php", "GET");
-					JSONObject jObject = new JSONObject(response);
-					System.err.println(jObject);
-					JSONArray data = jObject.getJSONArray("data");
-					System.err.println(data);
-					for (int i = 0; i < data.length(); i++) {
-						String tmp = data.get(i).toString();
-						JSONObject user = new JSONObject(tmp);
-						System.err.println(user);
-						System.err.println(user.getString("username"));
-						System.err.println(user.getString("password"));
-						System.err.println(user.get("username"));
-						System.err.println(user.get("password"));
-					}*/
-					
-					//Get Object
-					/*String response = httpRequest(null, "http://localhost/au2macro/user.php?username=root", "GET");
-					JSONObject jObject = new JSONObject(response);
-					System.err.println(jObject);
-					JSONObject data = jObject.getJSONObject("data");
-					System.err.println(data);*/
-					
-					//createAdminAccount();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -105,11 +79,15 @@ public class Login extends JFrame {
 			String accessToken = "";
 			Date expiration = new Date(System.currentTimeMillis());
 			String status = "Active";
-	
+
 			@SuppressWarnings("deprecation")
 			String request = "username="+URLEncoder.encode(username)+"&password="+URLEncoder.encode(password)+"&accessToken="+URLEncoder.encode(accessToken)+"&expiration="+URLEncoder.encode(expiration.toString())+"&status="+URLEncoder.encode(status)+"";
 			String response = HttpConnection.httpRequest(request, SV.URL+"user.create.php", "POST");
-			System.out.println(response);
+			if (response.contains("\"data\"")) {
+				System.out.println(response);
+			}else {
+				System.err.println("Error response.");
+			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -167,7 +145,7 @@ public class Login extends JFrame {
 		txtPassword.setBounds(59, 140, 200, 25);
 		contentPane.add(txtPassword);
 	}
-	
+
 	@SuppressWarnings("static-access")
 	public void login() {
 		try {
@@ -178,67 +156,75 @@ public class Login extends JFrame {
 
 			if (!username.isEmpty() && !password.isEmpty()) {
 				response = HttpConnection.httpRequest(null, SV.URL+"user.php?username="+username, "GET");
-				jObject = new JSONObject(response);
-				data = jObject.getJSONObject("data");
-				if (data.getString("status").contains("success")) {
-					JSONObject message = data.getJSONObject("message");
-					System.out.println(message.getString("lastAccess"));
-					int id = Integer.parseInt(message.getString("id"));
-					String getUsername = message.getString("username");
-					String encrpytPassword = message.getString("password");
-					Date getDate = new SimpleDateFormat("yyyy-MM-dd").parse(message.getString("expiration"));
-					String getPassword = StandardDcrypt(encrpytPassword);
-					boolean isValidSubsription = false;
-					if (now.compareTo(getDate) > 0) {
-						isValidSubsription = false;
-			        } else if (now.compareTo(getDate) < 0) {
-			        	isValidSubsription = true;
-			        } else {
-			        	isValidSubsription = false;
-			        }
-					System.out.println(isValidSubsription);
-					if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true && message.getString("status").equals("Active")) {
+				if (response.contains("\"data\"")) {
+					jObject = new JSONObject(response);
+					data = jObject.getJSONObject("data");
+					if (data.getString("status").contains("success")) {
+						JSONObject message = data.getJSONObject("message");
 						System.out.println(message.getString("lastAccess"));
-						response = HttpConnection.httpRequest(null, SV.URL+"user.lastaccess.php?username="+username, "GET");
-						jObject = new JSONObject(response);
-						data = jObject.getJSONObject("data");
-						if (data.getString("status").contains("success")) {
-							Automation automation = new Automation();
-							String token = createUserToken(id);
-							automation.token = token;
-							dispose();
-							automation.main(null);
-						}else {
-							JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+						int id = Integer.parseInt(message.getString("id"));
+						String getUsername = message.getString("username");
+						String encrpytPassword = message.getString("password");
+						Date getDate = new SimpleDateFormat("yyyy-MM-dd").parse(message.getString("expiration"));
+						String getPassword = StandardDcrypt(encrpytPassword);
+						boolean isValidSubsription = false;
+						if (now.compareTo(getDate) > 0) {
+							isValidSubsription = false;
+						} else if (now.compareTo(getDate) < 0) {
+							isValidSubsription = true;
+						} else {
+							isValidSubsription = false;
 						}
-					}else {
+						System.out.println(isValidSubsription);
+						if (username.equals(getUsername) && password.equals(getPassword) && isValidSubsription == true && message.getString("status").equals("Active")) {
+							System.out.println(message.getString("lastAccess"));
+							response = HttpConnection.httpRequest(null, SV.URL+"user.lastaccess.php?username="+username, "GET");
+							if (response.contains("\"data\"")) {
+								jObject = new JSONObject(response);
+								data = jObject.getJSONObject("data");
+								if (data.getString("status").contains("success")) {
+									Automation automation = new Automation();
+									String token = createUserToken(id);
+									automation.token = token;
+									dispose();
+									automation.main(null);
+								}else {
+									JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}else {
+								JOptionPane.showMessageDialog(null, "Slow internet connection.", "Au2macro", JOptionPane.INFORMATION_MESSAGE);
+							}
+						}else {
+							JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}else{
 						JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-				}else{
-					JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
+					}	
 				}
 			}else {
 				JOptionPane.showMessageDialog(null, "Invalid username and password.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e) {
-			//System.err.println(e.getMessage());
 			JOptionPane.showMessageDialog(null, "Can't connect at this momment", "Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	@SuppressWarnings("static-access")
 	public String createUserToken(int id) {
 		try {
 			String token = UUID.randomUUID().toString();
 			@SuppressWarnings("deprecation")
 			String request = "id="+URLEncoder.encode(String.valueOf(id))+"&accessToken="+URLEncoder.encode(token);
+			//should change naming convention on user.create.accesstoken to user.update.accesstoken
 			response = HttpConnection.httpRequest(request, SV.URL+"user.create.accesstoken.php", "POST");
-			jObject = new JSONObject(response);
-			data = jObject.getJSONObject("data");
-			if (data.getString("status").contains("success")) {
-				return token;
-			}else {
-				JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+			if (response.contains("\"data\"")) {
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
+					return token;
+				}else {
+					JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		} catch (Exception e) {
 			//System.err.println(e.getMessage());
