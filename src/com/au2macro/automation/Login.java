@@ -193,8 +193,9 @@ public class Login extends JFrame {
 									Automation automation = new Automation();
 									String token = createUserToken(id);
 									automation.token = token;
+									automation.id = id;
+									AccessToken.id = id;
 									dispose();
-									UserLog.createLog(String.valueOf(id), "Account login.");
 									automation.main(null);
 								}else {
 									UserLog.createLog(String.valueOf(id), "Multiple use of account.");
@@ -230,7 +231,7 @@ public class Login extends JFrame {
 				jObject = new JSONObject(response);
 				data = jObject.getJSONObject("data");
 				if (data.getString("status").contains("success")) {
-					UserLog.createLog(String.valueOf(id), "Create token.");
+					UserLog.createLog(String.valueOf(id), "Login and create token.");
 					return token;
 				}else {
 					JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);

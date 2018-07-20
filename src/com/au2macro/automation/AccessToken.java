@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
+import com.au2macro.automation.utils.UserLog;
 
 public class AccessToken implements Runnable{
 	
@@ -15,6 +16,7 @@ public class AccessToken implements Runnable{
 	JSONObject jObject = new JSONObject();
 	JSONObject data = new JSONObject();
 	public static StaticVariable SV;
+	public static int id;
 	
 	private String token;
 	
@@ -45,6 +47,7 @@ public class AccessToken implements Runnable{
 							System.exit(0);
 						}
 					}else {
+						UserLog.createLog(String.valueOf(id), "Unauthorized token");
 						JOptionPane.showMessageDialog(null, "Unauthorized token. Please relogin.", "Error", JOptionPane.YES_OPTION);
 						Automation.frame.logOut(token);
 						Automation.checkToken.interrupt();

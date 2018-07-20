@@ -51,6 +51,7 @@ import com.au2macro.automation.utils.AutomationAutoShout;
 import com.au2macro.automation.utils.AutomationAutoSpace;
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
+import com.au2macro.automation.utils.UserLog;
 
 public class Automation extends JFrame{
 
@@ -62,6 +63,7 @@ public class Automation extends JFrame{
 	private static JTextField txtInterval;
 	private static JTextField txtStartInterval;
 	public static String token;
+	public static int id;
 	public static Thread checkToken;
 	public static Automation frame;
 	
@@ -550,6 +552,7 @@ public class Automation extends JFrame{
 				data = jObject.getJSONObject("data");
 				if (data.getString("status").contains("success")) {
 					System.out.println("logout success.");
+					UserLog.createLog(String.valueOf(id), "Logout account.");
 				}	
 			}else {
 				logOut(token);
