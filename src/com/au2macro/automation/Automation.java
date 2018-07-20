@@ -59,8 +59,8 @@ public class Automation extends JFrame{
 	 */
 	private static final long serialVersionUID = 6900633506525697942L;
 	private JPanel contentPane;
-	private JTextField txtInterval;
-	private JTextField txtStartInterval;
+	private static JTextField txtInterval;
+	private static JTextField txtStartInterval;
 	public static String token;
 	public static Thread checkToken;
 	public static Automation frame;
@@ -115,18 +115,21 @@ public class Automation extends JFrame{
 	 */
 	public static boolean isStart = false;
 	public static boolean isStop = false;
-	public AutomationAutoNumKey automationAutoNumKey;
-	public AutomationAutoRightClick automationAutoRightClick;
-	public AutomationAutoShout automationAutoShout;
-	public AutomationAutoSpace automationAutoSpace;
-	public Thread thread;
+	public static AutomationAutoNumKey automationAutoNumKey;
+	public static AutomationAutoRightClick automationAutoRightClick;
+	public static AutomationAutoShout automationAutoShout;
+	public static AutomationAutoSpace automationAutoSpace;
+	public static Thread thread;
 	public static int startIntrv;
 	public static int intrv;
 	static TrayIcon trayIcon;
+	static JButton btnStart = new JButton("Start");
+	static JButton btnStop = new JButton("Stop");
 
 	public static void detectHotkey() {
 		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK);
 	}
+	
 	public static void systemTray(Automation frame) {
 		if (SystemTray.isSupported()) {
 			trayIcon = new TrayIcon(createIcon("/com/au2macro/automation/image/systemtrayicon.png", "Icon"));
@@ -134,10 +137,20 @@ public class Automation extends JFrame{
 			final SystemTray tray = SystemTray.getSystemTray();
 			final PopupMenu menu = new PopupMenu();
 			MenuItem show = new MenuItem("Show");
+			MenuItem stop = new MenuItem("Stop");
 			MenuItem exit = new MenuItem("Exit");
 			menu.add(show);
+			menu.add(stop);
 			menu.add(exit);
-
+			
+			stop.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					stopService();
+					tray.remove(trayIcon);
+					frame.setVisible(true);
+				}
+			});
 			show.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -208,10 +221,8 @@ public class Automation extends JFrame{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JButton btnStart = new JButton("Start");
 		btnStart.setForeground(new Color(0, 128, 0));
 		btnStart.setBackground(UIManager.getColor("Button.background"));
-		JButton btnStop = new JButton("Stop");
 		btnStop.setEnabled(false);
 		btnStop.setForeground(new Color(128, 0, 0));
 		btnStop.setBackground(UIManager.getColor("Button.background"));
@@ -310,31 +321,7 @@ public class Automation extends JFrame{
 		contentPane.add(btnStart);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					if (isStart == true) {
-						isStart = false;
-						btnStart.setEnabled(true);
-						btnStop.setEnabled(false);
-						txtInterval.setEnabled(true);
-						txtStartInterval.setEnabled(true);
-						listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Stopping service!");
-						thread.interrupt();
-						if (automationAutoNumKey != null) {
-							automationAutoNumKey = null;
-						}
-						if (automationAutoRightClick != null) {
-							automationAutoRightClick = null;
-						}
-						if (automationAutoSpace != null) {
-							automationAutoSpace = null;
-						}
-						if (automationAutoShout != null) {
-							automationAutoShout = null;
-						}
-					}
-				} catch (Exception exception) {
-					System.err.println(exception.getMessage());
-				}
+				stopService();
 			}
 		});
 		btnStop.setBounds(388, 226, 89, 30);
@@ -517,6 +504,34 @@ public class Automation extends JFrame{
 		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnNumber.setBounds(316, 141, 150, 23);
 		contentPane.add(rdbtnNumber);
+	}
+	
+	public static void stopService() {
+		try {
+			if (isStart == true) {
+				isStart = false;
+				btnStart.setEnabled(true);
+				btnStop.setEnabled(false);
+				txtInterval.setEnabled(true);
+				txtStartInterval.setEnabled(true);
+				listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Stopping service!");
+				thread.interrupt();
+				if (automationAutoNumKey != null) {
+					automationAutoNumKey = null;
+				}
+				if (automationAutoRightClick != null) {
+					automationAutoRightClick = null;
+				}
+				if (automationAutoSpace != null) {
+					automationAutoSpace = null;
+				}
+				if (automationAutoShout != null) {
+					automationAutoShout = null;
+				}
+			}
+		} catch (Exception exception) {
+			System.err.println(exception.getMessage());
+		}
 	}
 	
 	static String response;

@@ -40,6 +40,10 @@ public class AccessToken implements Runnable{
 					data = jObject.getJSONObject("data");
 					if (data.getString("status").contains("success")) {
 						updateLastAccess(token);
+						if (Double.parseDouble(Login.checkAppVersion()) != 0) {
+							JOptionPane.showMessageDialog(null, "Please update au2macro.", "Au2macro", JOptionPane.INFORMATION_MESSAGE);
+							System.exit(0);
+						}
 					}else {
 						JOptionPane.showMessageDialog(null, "Unauthorized token. Please relogin.", "Error", JOptionPane.YES_OPTION);
 						Automation.frame.logOut(token);

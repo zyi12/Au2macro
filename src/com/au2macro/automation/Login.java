@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
+import com.au2macro.automation.utils.UserLog;
 
 public class Login extends JFrame {
 
@@ -37,9 +38,10 @@ public class Login extends JFrame {
 	private JPasswordField txtPassword;
 	private static final String key = "Au2macroAu2macro";// 128 bit key	
 	public static StaticVariable SV;
-	String response;
-	JSONObject jObject = new JSONObject();
-	JSONObject data = new JSONObject();
+	static String response;
+	static JSONObject jObject = new JSONObject();
+	static JSONObject data = new JSONObject();
+	private static final double appVersion = 1.02;
 	/**
 	 * Launch the application.
 	 */
@@ -47,9 +49,14 @@ public class Login extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login();
-					frame.setLocationRelativeTo(null);
-					frame.setVisible(true);
+					if (Double.parseDouble(checkAppVersion()) == 0) {
+						Login frame = new Login();
+						frame.setLocationRelativeTo(null);
+						frame.setVisible(true);	
+					}else {
+						JOptionPane.showMessageDialog(null, "Please update au2macro.", "Au2macro", JOptionPane.INFORMATION_MESSAGE);
+						System.exit(0);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -187,8 +194,10 @@ public class Login extends JFrame {
 									String token = createUserToken(id);
 									automation.token = token;
 									dispose();
+									UserLog.createLog(String.valueOf(id), "Account login.");
 									automation.main(null);
 								}else {
+									UserLog.createLog(String.valueOf(id), "Multiple use of account.");
 									JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}else {
@@ -208,7 +217,7 @@ public class Login extends JFrame {
 			JOptionPane.showMessageDialog(null, "Can't connect at this momment", "Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-
+	
 	@SuppressWarnings("static-access")
 	public String createUserToken(int id) {
 		try {
@@ -221,6 +230,7 @@ public class Login extends JFrame {
 				jObject = new JSONObject(response);
 				data = jObject.getJSONObject("data");
 				if (data.getString("status").contains("success")) {
+					UserLog.createLog(String.valueOf(id), "Create token.");
 					return token;
 				}else {
 					JOptionPane.showMessageDialog(null, "Account currently in use.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -228,6 +238,27 @@ public class Login extends JFrame {
 			}
 		} catch (Exception e) {
 			//System.err.println(e.getMessage());
+		}
+		return null;
+	}
+	
+	@SuppressWarnings({ "static-access", "deprecation" })
+	public static String checkAppVersion() {
+		try {
+			String request = "version="+URLEncoder.encode(String.valueOf(appVersion));
+			response = HttpConnection.httpRequest(request, SV.URL+"app.version.php", "POST");
+			if (response.contains("\"data\"")) {
+				jObject = new JSONObject(response);
+				data = jObject.getJSONObject("data");
+				if (data.getString("status").contains("success")) {
+					data = data.getJSONObject("message");
+					return data.getString("version");
+				}else {
+					checkAppVersion();
+				}
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
 		return null;
 	}
