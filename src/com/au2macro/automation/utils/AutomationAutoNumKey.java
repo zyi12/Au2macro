@@ -15,9 +15,15 @@ public class AutomationAutoNumKey implements Runnable{
 				Robot robot = new Robot();
 				int interval = Automation.intrv;
 				
-				robot.keyPress(KeyEvent.VK_PERIOD);
-				robot.keyRelease(KeyEvent.VK_PERIOD);
-				Thread.sleep(interval);
+				if (Automation.changeTarget.equals("Z")) {
+					robot.keyPress(KeyEvent.VK_Z);
+					robot.keyRelease(KeyEvent.VK_Z);
+					Thread.sleep(interval);
+				}else {
+					robot.keyPress(KeyEvent.VK_PERIOD);
+					robot.keyRelease(KeyEvent.VK_PERIOD);
+					Thread.sleep(interval);
+				}
 				
 				robot.keyPress(KeyEvent.VK_SPACE);
 				robot.keyRelease(KeyEvent.VK_SPACE);

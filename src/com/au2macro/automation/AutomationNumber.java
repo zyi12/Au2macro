@@ -6,8 +6,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,6 +35,7 @@ public class AutomationNumber extends JFrame {
 	static JCheckBox chckbx3 = new JCheckBox("3");
 	static JCheckBox chckbx2 = new JCheckBox("2");
 	static JCheckBox chckbx1 = new JCheckBox("1");
+	static JComboBox comboBox = new JComboBox();
 	/**
 	 * Launch the application.
 	 */
@@ -178,6 +181,7 @@ public class AutomationNumber extends JFrame {
 		}else {
 			Automation.isEqual = false;
 		}
+		Automation.changeTarget = comboBox.getSelectedItem().toString();
 	}
 
 	/**
@@ -326,5 +330,19 @@ public class AutomationNumber extends JFrame {
 		});
 		btnSave.setBounds(324, 137, 89, 23);
 		contentPane.add(btnSave);
+		
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				checkItem();
+			}
+		});
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Z", "Period"}));
+		comboBox.setBounds(156, 126, 89, 20);
+		contentPane.add(comboBox);
+		
+		JLabel lblChangeTarget = new JLabel("Change Target:");
+		lblChangeTarget.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblChangeTarget.setBounds(22, 129, 115, 14);
+		contentPane.add(lblChangeTarget);
 	}
 }

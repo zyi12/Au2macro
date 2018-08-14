@@ -19,11 +19,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,6 +54,7 @@ import com.au2macro.automation.utils.AutomationAutoSpace;
 import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 import com.au2macro.automation.utils.UserLog;
+import java.awt.BorderLayout;
 
 public class Automation extends JFrame{
 
@@ -79,6 +82,8 @@ public class Automation extends JFrame{
 	public static boolean is0 = true;
 	public static boolean isMinus = true;
 	public static boolean isEqual = true;
+	public static String changeTarget = "Z";
+	
 	static List listLogs = new List();
 	/**
 	 * Launch the application.
@@ -157,6 +162,9 @@ public class Automation extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					tray.remove(trayIcon);
+					if (btnStop.isEnabled() == false && btnStart.isEnabled() == false) {
+						btnStop.setEnabled(true);
+					}
 					frame.setVisible(true);
 				}
 			});
@@ -349,7 +357,7 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtInterval.setBounds(262, 207, 100, 25);
+		txtInterval.setBounds(262, 207, 80, 25);
 		contentPane.add(txtInterval);
 
 		JLabel lblNewLabel = new JLabel("Interval");
@@ -377,7 +385,7 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtStartInterval.setBounds(262, 264, 100, 25);
+		txtStartInterval.setBounds(262, 264, 80, 25);
 		contentPane.add(txtStartInterval);
 
 		JLabel lblStartInterval = new JLabel("Start Interval");
@@ -482,7 +490,8 @@ public class Automation extends JFrame{
 		menuBar.add(mnExit);
 
 		rdbtnClick.setForeground(Color.BLACK);
-		rdbtnClick.setBackground(new Color(95, 158, 160));
+		rdbtnClick.setBackground(new Color(0,0,0,0));
+		rdbtnClick.setOpaque(false);
 		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnClick.setBounds(316, 66, 150, 23);
 		rdbtnClick.setVisible(false);
@@ -490,22 +499,52 @@ public class Automation extends JFrame{
 		contentPane.add(rdbtnClick);
 
 		rdbtnSpace.setForeground(Color.BLACK);
-		rdbtnSpace.setBackground(new Color(95, 158, 160));
+		rdbtnSpace.setBackground(new Color(0,0,0,0));
+		rdbtnSpace.setOpaque(false);
 		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnSpace.setBounds(316, 116, 150, 23);
 		contentPane.add(rdbtnSpace);
 
 		rdbtnShout.setForeground(Color.BLACK);
-		rdbtnShout.setBackground(new Color(95, 158, 160));
+		rdbtnShout.setBackground(new Color(0,0,0,0));
+		rdbtnShout.setOpaque(false);
 		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnShout.setBounds(316, 91, 150, 23);
 		contentPane.add(rdbtnShout);
 
 		rdbtnNumber.setForeground(Color.BLACK);
-		rdbtnNumber.setBackground(new Color(95, 158, 160));
+		rdbtnNumber.setBackground(new Color(0,0,0,0));
+		rdbtnNumber.setOpaque(false);
 		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnNumber.setBounds(316, 141, 150, 23);
 		contentPane.add(rdbtnNumber);
+		
+		JLabel lblMs = new JLabel("ms");
+		lblMs.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblMs.setForeground(Color.BLACK);
+		lblMs.setBounds(346, 269, 25, 20);
+		contentPane.add(lblMs);
+		
+		JLabel label = new JLabel("ms");
+		label.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		label.setForeground(Color.BLACK);
+		label.setBounds(346, 212, 25, 20);
+		contentPane.add(label);
+		
+		JPanel backgroundPanel = new JPanel();
+		backgroundPanel.setBackground(Color.GREEN);
+		backgroundPanel.setBounds(0, 1, 494, 321);
+		contentPane.add(backgroundPanel);
+		backgroundPanel.setLayout(new BorderLayout(0, 0));
+		try {
+			String path = SV.URL+"Background.jpg";
+			URL url = new URL(path);
+			BufferedImage image = ImageIO.read(url);
+			JLabel labels = new JLabel(new ImageIcon(image));
+			backgroundPanel.add(labels);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	public static void stopService() {
