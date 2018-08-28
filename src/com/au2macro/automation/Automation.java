@@ -536,7 +536,7 @@ public class Automation extends JFrame{
 		backgroundPanel.setBounds(0, 1, 494, 321);
 		contentPane.add(backgroundPanel);
 		backgroundPanel.setLayout(new BorderLayout(0, 0));
-		try {
+		/*try {
 			String path = SV.URL+"Background.jpg";
 			URL url = new URL(path);
 			BufferedImage image = ImageIO.read(url);
@@ -544,7 +544,7 @@ public class Automation extends JFrame{
 			backgroundPanel.add(labels);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 	}
 	
 	public static void stopService() {

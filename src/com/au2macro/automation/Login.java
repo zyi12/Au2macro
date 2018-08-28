@@ -1,16 +1,21 @@
 package com.au2macro.automation;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.json.JSONObject;
@@ -41,7 +45,7 @@ public class Login extends JFrame {
 	static String response;
 	static JSONObject jObject = new JSONObject();
 	static JSONObject data = new JSONObject();
-	private static final double appVersion = 1.02;
+	private static final double appVersion = 1.03;
 	/**
 	 * Launch the application.
 	 */
@@ -51,8 +55,9 @@ public class Login extends JFrame {
 				try {
 					if (Double.parseDouble(checkAppVersion()) == 0) {
 						Login frame = new Login();
+						frame.getContentPane();
 						frame.setLocationRelativeTo(null);
-						frame.setVisible(true);	
+						frame.setVisible(true);
 					}else {
 						JOptionPane.showMessageDialog(null, "Please update au2macro.", "Au2macro", JOptionPane.INFORMATION_MESSAGE);
 						System.exit(0);
@@ -108,6 +113,10 @@ public class Login extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 325, 304);
 		contentPane = new JPanel();
+		contentPane.setBorder(null);
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+		
 		txtUsername = new JTextField();
 		txtUsername.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -129,28 +138,38 @@ public class Login extends JFrame {
 			}
 		});
 
-		contentPane.setBackground(new Color(95, 158, 160));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-
-		txtUsername.setBounds(59, 78, 200, 25);
+		txtUsername.setBounds(84, 78, 150, 25);
 		contentPane.add(txtUsername);
 		txtUsername.setColumns(10);
 
 		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblUsername.setBounds(52, 53, 100, 20);
+		lblUsername.setBounds(78, 53, 100, 20);
 		contentPane.add(lblUsername);
 
 		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblPassword.setBounds(52, 114, 100, 20);
+		lblPassword.setBounds(78, 114, 100, 20);
 		contentPane.add(lblPassword);
 
 		btnLogin.setBounds(115, 192, 89, 23);
 		contentPane.add(btnLogin);
 
-		txtPassword.setBounds(59, 140, 200, 25);
+		txtPassword.setBounds(84, 140, 150, 25);
 		contentPane.add(txtPassword);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.GREEN);
+		panel.setBounds(0, 0, 319, 276);
+		contentPane.add(panel);
+		panel.setLayout(new BorderLayout(0, 0));
+		try {
+			String path = SV.URL+"Background.jpg";
+			URL url = new URL(path);
+			BufferedImage image = ImageIO.read(url);
+			JLabel label = new JLabel(new ImageIcon(image));
+			panel.add(label);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@SuppressWarnings("static-access")
