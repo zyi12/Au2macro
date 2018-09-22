@@ -45,7 +45,7 @@ public class Login extends JFrame {
 	static String response;
 	static JSONObject jObject = new JSONObject();
 	static JSONObject data = new JSONObject();
-	private static final double appVersion = 1.03;
+	private static final double appVersion = 1.04;
 	/**
 	 * Launch the application.
 	 */

@@ -55,6 +55,9 @@ import com.au2macro.automation.utils.HttpConnection;
 import com.au2macro.automation.utils.StaticVariable;
 import com.au2macro.automation.utils.UserLog;
 import java.awt.BorderLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class Automation extends JFrame{
 
@@ -84,6 +87,25 @@ public class Automation extends JFrame{
 	public static boolean isEqual = true;
 	public static String changeTarget = "Z";
 	
+	static JCheckBox chckbxEqual = new JCheckBox("=");
+	static JCheckBox chckbx6 = new JCheckBox("6");
+	static JCheckBox chckbx5 = new JCheckBox("5");
+	static JCheckBox chckbxMinus = new JCheckBox("-");
+	static JCheckBox chckbx0 = new JCheckBox("0");
+	static JCheckBox chckbx4 = new JCheckBox("4");
+	static JCheckBox chckbx3 = new JCheckBox("3");
+	static JCheckBox chckbx9 = new JCheckBox("9");
+	static JCheckBox chckbx2 = new JCheckBox("2");
+	static JCheckBox chckbx8 = new JCheckBox("8");
+	static JCheckBox chckbx7 = new JCheckBox("7");
+	static JCheckBox chckbx1 = new JCheckBox("1");
+	static JComboBox cbTarget = new JComboBox();
+	
+	JRadioButton rdbtnClick = new JRadioButton("Auto Right Click");
+	JRadioButton rdbtnSpace = new JRadioButton("Auto Space");
+	JRadioButton rdbtnShout = new JRadioButton("Auto Shout");
+	JRadioButton rdbtnNumber = new JRadioButton("Auto 1 ~ =");
+	
 	static List listLogs = new List();
 	/**
 	 * Launch the application.
@@ -98,6 +120,9 @@ public class Automation extends JFrame{
 					frame.setExtendedState(JFrame.ICONIFIED);
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
+					if (frame.isShowing()) {
+						isCheck();
+					}
 					AccessToken accessToken = new AccessToken();
 					accessToken.setToken(token);
 					listLogs.add(new SimpleDateFormat("h:mm a").format(new Date(System.currentTimeMillis()))+": Authorized login.");
@@ -224,7 +249,7 @@ public class Automation extends JFrame{
 		setTitle("Au2Macro");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 500, 350);
+		setBounds(100, 100, 500, 500);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(95, 158, 160));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -239,27 +264,30 @@ public class Automation extends JFrame{
 		txtInterval = new JTextField();
 		txtStartInterval = new JTextField();
 		
-		JRadioButton rdbtnClick = new JRadioButton("Auto Right Click");
 		rdbtnClick.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				rbDisable();
 				txtInterval.setText("50");
 			}
 		});
-		JRadioButton rdbtnSpace = new JRadioButton("Auto Space");
+		
 		rdbtnSpace.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				rbDisable();
 				txtInterval.setText("50");
 			}
 		});
-		JRadioButton rdbtnShout = new JRadioButton("Auto Shout");
+		
 		rdbtnShout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				rbDisable();
 				txtInterval.setText("20000");
 			}
 		});
-		JRadioButton rdbtnNumber = new JRadioButton("Auto 1 ~ =");
+		
 		rdbtnNumber.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				rbEnable();
 				txtInterval.setText("50");
 			}
 		});
@@ -327,14 +355,196 @@ public class Automation extends JFrame{
 
 			}
 		});
-		btnStart.setBounds(388, 191, 89, 30);
+		cbTarget.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		cbTarget.setModel(new DefaultComboBoxModel(new String[] {"Z", "Period"}));
+		cbTarget.setBounds(191, 170, 89, 20);
+		contentPane.add(cbTarget);
+		
+		JLabel lblChangeTarget = new JLabel("Change Target:");
+		lblChangeTarget.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblChangeTarget.setBounds(57, 173, 115, 14);
+		contentPane.add(lblChangeTarget);
+		chckbxEqual.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		chckbxEqual.setSelected(true);
+		chckbxEqual.setBackground(new Color(0,0,0,0));
+		chckbxEqual.setOpaque(false);
+		chckbxEqual.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbxEqual.setBounds(398, 130, 50, 23);
+		contentPane.add(chckbxEqual);
+		chckbx6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx6.setSelected(true);
+		chckbx6.setBackground(new Color(0,0,0,0));
+		chckbx6.setOpaque(false);
+		chckbx6.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx6.setBounds(398, 104, 50, 23);
+		contentPane.add(chckbx6);
+		chckbx5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx5.setSelected(true);
+		chckbx5.setBackground(new Color(0,0,0,0));
+		chckbx5.setOpaque(false);
+		chckbx5.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx5.setBounds(329, 104, 50, 23);
+		contentPane.add(chckbx5);
+		chckbxMinus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbxMinus.setSelected(true);
+		chckbxMinus.setBackground(new Color(0,0,0,0));
+		chckbxMinus.setOpaque(false);
+		chckbxMinus.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbxMinus.setBounds(329, 130, 50, 23);
+		contentPane.add(chckbxMinus);
+		chckbx0.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx0.setSelected(true);
+		chckbx0.setBackground(new Color(0,0,0,0));
+		chckbx0.setOpaque(false);
+		chckbx0.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx0.setBounds(260, 130, 50, 23);
+		contentPane.add(chckbx0);
+		chckbx4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx4.setSelected(true);
+		chckbx4.setBackground(new Color(0,0,0,0));
+		chckbx4.setOpaque(false);
+		chckbx4.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx4.setBounds(260, 104, 50, 23);
+		contentPane.add(chckbx4);
+		chckbx3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx3.setSelected(true);
+		chckbx3.setBackground(new Color(0,0,0,0));
+		chckbx3.setOpaque(false);
+		chckbx3.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx3.setBounds(191, 104, 50, 23);
+		contentPane.add(chckbx3);
+		chckbx9.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx9.setSelected(true);
+		chckbx9.setBackground(new Color(0,0,0,0));
+		chckbx9.setOpaque(false);
+		chckbx9.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx9.setBounds(191, 130, 50, 23);
+		contentPane.add(chckbx9);
+		chckbx2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx2.setSelected(true);
+		chckbx2.setBackground(new Color(0,0,0,0));
+		chckbx2.setOpaque(false);
+		chckbx2.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx2.setBounds(122, 104, 50, 23);
+		contentPane.add(chckbx2);
+		chckbx8.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx8.setSelected(true);
+		chckbx8.setBackground(new Color(0,0,0,0));
+		chckbx8.setOpaque(false);
+		chckbx8.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx8.setBounds(122, 130, 50, 23);
+		contentPane.add(chckbx8);
+		chckbx7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx7.setSelected(true);
+		chckbx7.setBackground(new Color(0,0,0,0));
+		chckbx7.setOpaque(false);
+		chckbx7.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx7.setBounds(53, 130, 50, 23);
+		contentPane.add(chckbx7);
+		chckbx1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				isCheck();
+				checkItem();
+			}
+		});
+		
+		
+		chckbx1.setSelected(true);
+		chckbx1.setBackground(new Color(0,0,0,0));
+		chckbx1.setOpaque(false);
+		chckbx1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		chckbx1.setBounds(53, 104, 50, 23);
+		contentPane.add(chckbx1);
+		btnStart.setBounds(386, 315, 89, 30);
 		contentPane.add(btnStart);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				stopService();
 			}
 		});
-		btnStop.setBounds(388, 226, 89, 30);
+		btnStop.setBounds(386, 350, 89, 30);
 		contentPane.add(btnStop);
 
 		txtInterval.setText("50");
@@ -357,12 +567,12 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtInterval.setBounds(262, 207, 80, 25);
+		txtInterval.setBounds(260, 331, 80, 25);
 		contentPane.add(txtInterval);
 
 		JLabel lblNewLabel = new JLabel("Interval");
 		lblNewLabel.setForeground(Color.BLACK);
-		lblNewLabel.setBounds(262, 182, 46, 14);
+		lblNewLabel.setBounds(260, 306, 46, 14);
 		contentPane.add(lblNewLabel);
 
 		txtStartInterval.setText("2000");
@@ -385,12 +595,12 @@ public class Automation extends JFrame{
 				}
 			}
 		});
-		txtStartInterval.setBounds(262, 264, 80, 25);
+		txtStartInterval.setBounds(260, 388, 80, 25);
 		contentPane.add(txtStartInterval);
 
 		JLabel lblStartInterval = new JLabel("Start Interval");
 		lblStartInterval.setForeground(Color.BLACK);
-		lblStartInterval.setBounds(262, 241, 86, 14);
+		lblStartInterval.setBounds(260, 365, 86, 14);
 		contentPane.add(lblStartInterval);
 
 		JLabel lblAutoMacro = new JLabel("Au2macro");
@@ -401,7 +611,7 @@ public class Automation extends JFrame{
 		contentPane.add(lblAutoMacro);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(20, 84, 213, 220);
+		scrollPane.setBounds(20, 223, 213, 220);
 		contentPane.add(scrollPane);
 		scrollPane.setViewportView(listLogs);
 
@@ -413,7 +623,7 @@ public class Automation extends JFrame{
 				listLogs.removeAll();
 			}
 		});
-		btnClear.setBounds(388, 261, 89, 30);
+		btnClear.setBounds(386, 385, 89, 30);
 		contentPane.add(btnClear);
 
 		JPanel panel = new JPanel();
@@ -461,11 +671,11 @@ public class Automation extends JFrame{
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mntmAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Au2macro v1.0\nContact: au2macro@gmail.com");
+				JOptionPane.showMessageDialog(null, "Au2macro v1.4\nContact: au2macro@gmail.com");
 			}
 		});
 		
-		JMenuItem mntmNumkey = new JMenuItem("Edit 1 ~ =");
+		/*JMenuItem mntmNumkey = new JMenuItem("Edit 1 ~ =");
 		mntmNumkey.addActionListener(new ActionListener() {
 			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent arg0) {
@@ -473,7 +683,7 @@ public class Automation extends JFrame{
 				automationNumber.main(null);
 			}
 		});
-		mnFile.add(mntmNumkey);
+		mnFile.add(mntmNumkey);*/
 		mnFile.add(mntmAbout);
 
 		JMenu mnExit = new JMenu("Exit");
@@ -493,7 +703,7 @@ public class Automation extends JFrame{
 		rdbtnClick.setBackground(new Color(0,0,0,0));
 		rdbtnClick.setOpaque(false);
 		rdbtnClick.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rdbtnClick.setBounds(316, 66, 150, 23);
+		rdbtnClick.setBounds(314, 197, 150, 23);
 		rdbtnClick.setVisible(false);
 		rdbtnClick.setEnabled(false);
 		contentPane.add(rdbtnClick);
@@ -502,41 +712,41 @@ public class Automation extends JFrame{
 		rdbtnSpace.setBackground(new Color(0,0,0,0));
 		rdbtnSpace.setOpaque(false);
 		rdbtnSpace.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rdbtnSpace.setBounds(316, 116, 150, 23);
+		rdbtnSpace.setBounds(314, 247, 150, 23);
 		contentPane.add(rdbtnSpace);
 
 		rdbtnShout.setForeground(Color.BLACK);
 		rdbtnShout.setBackground(new Color(0,0,0,0));
 		rdbtnShout.setOpaque(false);
 		rdbtnShout.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rdbtnShout.setBounds(316, 91, 150, 23);
+		rdbtnShout.setBounds(314, 222, 150, 23);
 		contentPane.add(rdbtnShout);
 
 		rdbtnNumber.setForeground(Color.BLACK);
 		rdbtnNumber.setBackground(new Color(0,0,0,0));
 		rdbtnNumber.setOpaque(false);
 		rdbtnNumber.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rdbtnNumber.setBounds(316, 141, 150, 23);
+		rdbtnNumber.setBounds(314, 272, 150, 23);
 		contentPane.add(rdbtnNumber);
 		
 		JLabel lblMs = new JLabel("ms");
 		lblMs.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblMs.setForeground(Color.BLACK);
-		lblMs.setBounds(346, 269, 25, 20);
+		lblMs.setBounds(344, 393, 25, 20);
 		contentPane.add(lblMs);
 		
 		JLabel label = new JLabel("ms");
 		label.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		label.setForeground(Color.BLACK);
-		label.setBounds(346, 212, 25, 20);
+		label.setBounds(344, 336, 25, 20);
 		contentPane.add(label);
 		
 		JPanel backgroundPanel = new JPanel();
 		backgroundPanel.setBackground(Color.GREEN);
-		backgroundPanel.setBounds(0, 1, 494, 321);
+		backgroundPanel.setBounds(0, 1, 500, 471);
 		contentPane.add(backgroundPanel);
 		backgroundPanel.setLayout(new BorderLayout(0, 0));
-		/*try {
+		try {
 			String path = SV.URL+"Background.jpg";
 			URL url = new URL(path);
 			BufferedImage image = ImageIO.read(url);
@@ -544,7 +754,7 @@ public class Automation extends JFrame{
 			backgroundPanel.add(labels);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
-		}*/
+		}
 	}
 	
 	public static void stopService() {
@@ -599,5 +809,164 @@ public class Automation extends JFrame{
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public static void rbDisable() {
+		chckbx1.setEnabled(false);
+		chckbx2.setEnabled(false);
+		chckbx3.setEnabled(false);
+		chckbx4.setEnabled(false);
+		chckbx5.setEnabled(false);
+		chckbx6.setEnabled(false);
+		chckbx7.setEnabled(false);
+		chckbx8.setEnabled(false);
+		chckbx9.setEnabled(false);
+		chckbx0.setEnabled(false);
+		chckbxMinus.setEnabled(false);
+		chckbxEqual.setEnabled(false);
+		cbTarget.setEnabled(false);
+	}
+	
+	public static void rbEnable() {
+		chckbx1.setEnabled(true);
+		chckbx2.setEnabled(true);
+		chckbx3.setEnabled(true);
+		chckbx4.setEnabled(true);
+		chckbx5.setEnabled(true);
+		chckbx6.setEnabled(true);
+		chckbx7.setEnabled(true);
+		chckbx8.setEnabled(true);
+		chckbx9.setEnabled(true);
+		chckbx0.setEnabled(true);
+		chckbxMinus.setEnabled(true);
+		chckbxEqual.setEnabled(true);
+		cbTarget.setEnabled(true);
+	}
+	
+	public static void isCheck() {
+		if (Automation.is1 == true) {
+			chckbx1.setSelected(true);
+		} else {
+			chckbx1.setSelected(false);
+		}
+		if (Automation.is2 == true) {
+			chckbx2.setSelected(true);
+		} else {
+			chckbx2.setSelected(false);
+		}
+		if (Automation.is3 == true) {
+			chckbx3.setSelected(true);
+		} else {
+			chckbx3.setSelected(false);
+		}
+		if (Automation.is4 == true) {
+			chckbx4.setSelected(true);
+		} else {
+			chckbx4.setSelected(false);
+		}
+		if (Automation.is5 == true) {
+			chckbx5.setSelected(true);
+		} else {
+			chckbx5.setSelected(false);
+		}
+		if (Automation.is6 == true) {
+			chckbx6.setSelected(true);
+		} else {
+			chckbx6.setSelected(false);
+		}
+		if (Automation.is7 == true) {
+			chckbx7.setSelected(true);
+		} else {
+			chckbx7.setSelected(false);
+		}
+		if (Automation.is8 == true) {
+			chckbx8.setSelected(true);
+		} else {
+			chckbx8.setSelected(false);
+		}
+		if (Automation.is9 == true) {
+			chckbx9.setSelected(true);
+		} else {
+			chckbx9.setSelected(false);
+		}
+		if (Automation.is0 == true) {
+			chckbx0.setSelected(true);
+		} else {
+			chckbx0.setSelected(false);
+		}
+		if (Automation.isMinus == true) {
+			chckbxMinus.setSelected(true);
+		} else {
+			chckbxMinus.setSelected(false);
+		}
+		if (Automation.isEqual == true) {
+			chckbxEqual.setSelected(true);
+		} else {
+			chckbxEqual.setSelected(false);
+		}
+	}
+	
+	public static void checkItem() {
+		if (chckbx1.isSelected() == true) {
+			is1 = true;
+		}else {
+			is1 = false;
+		}
+		if (chckbx2.isSelected() == true) {
+			is2 = true;
+		}else {
+			is2 = false;
+		}
+		if (chckbx3.isSelected() == true) {
+			is3 = true;
+		}else {
+			is3 = false;
+		}
+		if (chckbx4.isSelected() == true) {
+			is4 = true;
+		}else {
+			is4 = false;
+		}
+		if (chckbx5.isSelected() == true) {
+			is5 = true;
+		}else {
+			is5 = false;
+		}
+		if (chckbx6.isSelected() == true) {
+			is6 = true;
+		}else {
+			is6 = false;
+		}
+		if (chckbx7.isSelected() == true) {
+			is7 = true;
+		}else {
+			is7 = false;
+		}
+		if (chckbx8.isSelected() == true) {
+			is8 = true;
+		}else {
+			is8 = false;
+		}
+		if (chckbx9.isSelected() == true) {
+			is9 = true;
+		}else {
+			is9 = false;
+		}
+		if (chckbx0.isSelected() == true) {
+			is0 = true;
+		}else {
+			is0 = false;
+		}
+		if (chckbxMinus.isSelected() == true) {
+			isMinus = true;
+		}else {
+			isMinus = false;
+		}
+		if (chckbxEqual.isSelected() == true) {
+			isEqual = true;
+		}else {
+			isEqual = false;
+		}
+		changeTarget = cbTarget.getSelectedItem().toString();
 	}
 }
